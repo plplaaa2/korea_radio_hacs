@@ -1,6 +1,3 @@
-![HAKC][hakc-shield]
-![HACS][hacs-shield]
-![Version][version-shield]
 
 # 📻 Korea Radio HACS Integration (v1.0.0)
 
