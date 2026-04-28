@@ -7,7 +7,8 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 
-from .const import DOMAIN, TITLE, CONF_HOST, CONF_TOKEN, DEFAULT_TOKEN
+# 도메인 직접 명시 (재구성 오류 방지)
+DOMAIN = "korea_radio_hacs"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,20 +22,19 @@ class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
-        errors = {}
         if user_input is not None:
-            # 기본적으로 입력된 데이터로 엔트리 생성
-            return self.async_create_entry(title=TITLE, data=user_input)
+            # const에서 가져오지 않고 직접 제목 설정하여 임포트 꼬임 방지
+            return self.async_create_entry(title="Korea Radio Hacs", data=user_input)
 
         schema = vol.Schema({
-            vol.Required(CONF_HOST, default="http://localhost:3005"): str,
-            vol.Required(CONF_TOKEN, default=DEFAULT_TOKEN): str,
+            vol.Required("host", default="http://localhost:3005"): str,
+            vol.Required("token", default="homeassistant"): str,
         })
-        return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+        return self.async_show_form(step_id="user", data_schema=schema)
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry):
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> KoreaRadioOptionsFlowHandler:
         """Get the options flow for this handler."""
         return KoreaRadioOptionsFlowHandler(config_entry)
 
@@ -42,7 +42,7 @@ class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Korea Radio options."""
 
-    def __init__(self, config_entry):
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
 
@@ -51,15 +51,16 @@ class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
+        # 현재 설정값 가져오기
         current_host = self.config_entry.options.get(
-            CONF_HOST, self.config_entry.data.get(CONF_HOST, "http://localhost:3005")
+            "host", self.config_entry.data.get("host", "http://localhost:3005")
         )
         current_token = self.config_entry.options.get(
-            CONF_TOKEN, self.config_entry.data.get(CONF_TOKEN, DEFAULT_TOKEN)
+            "token", self.config_entry.data.get("token", "homeassistant")
         )
 
         schema = vol.Schema({
-            vol.Required(CONF_HOST, default=current_host): str,
-            vol.Required(CONF_TOKEN, default=current_token): str,
+            vol.Required("host", default=current_host): str,
+            vol.Required("token", default=current_token): str,
         })
         return self.async_show_form(step_id="init", data_schema=schema)
