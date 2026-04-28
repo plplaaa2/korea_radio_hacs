@@ -28,16 +28,33 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 
 ## 📻 사용 방법
 
-### 1. 미디어 브라우저 (추천)
-Home Assistant 왼쪽 메뉴의 **미디어** 항목을 클릭한 후, **Korea Radio**를 선택하면 등록된 모든 라디오 채널을 한눈에 보고 즉시 재생할 수 있습니다.
+### 1. 미디어 브라우저 (강력 추천)
+가장 쉽고 직관적인 방법입니다. 별도의 설정 없이 HA UI에서 바로 채널을 선택할 수 있습니다.
+
+1. Home Assistant 사이드바에서 **미디어(Media)** 메뉴를 클릭합니다.
+2. 미디어 소스 목록에서 **Korea Radio**를 선택합니다.
+3. 표시되는 라디오 채널 목록 중 원하는 채널을 클릭합니다.
+4. 재생할 기기(스피커)를 선택하면 즉시 스트리밍이 시작됩니다.
 
 ### 2. 서비스 호출 (`korea_radio.play_radio`)
-기존 방식인 서비스 호출을 통해서도 라디오를 재생할 수 있습니다.
+자동화(Automation)나 대시보드 버튼에서 특정 채널을 재생하고 싶을 때 사용합니다.
 
 | 필드 | 필수 | 설명 | 예시 |
 | :--- | :---: | :--- | :--- |
 | `entity_id` | Yes | 재생할 미디어 플레이어 엔티티 ID | `media_player.living_room_speaker` |
-| `channel` | Yes | 재생할 채널 키 (대소문자 무관) | `KBSCoolFM`, `sbs_power`, `ebs` |
+| `channel` | Yes | 재생할 채널 키 (대소문자 무관) | `KBSCoolFM`, `sbs_power`, `mbc_fm` |
+
+**YAML 예제:**
+```yaml
+service: korea_radio.play_radio
+data:
+  entity_id: media_player.google_home_mini
+  channel: KBSCoolFM
+```
+
+## 💡 주요 개선 사항
+- **Google Cast 완벽 호환**: 서버 주소가 `localhost`나 `127.0.0.1`로 설정되어 있어도, Google Cast 기기에서 재생 시 자동으로 Home Assistant의 실제 내부 IP로 변환하여 전송합니다. (외부 기기 재생 실패 문제 해결)
+- **독자적인 API 관리**: 모든 스트리밍 URL 생성 로직이 `RadioEndpointManager`로 캡슐화되어 시스템 안정성이 크게 향상되었습니다.
 
 ## 📝 기여 및 라이센스
 이 프로젝트는 [miumida/korea_radio](https://github.com/miumida/korea_radio) 프로젝트의 아이디어에서 영감을 받아 현대적인 구조로 재작성되었습니다.
