@@ -5,17 +5,18 @@ from .const import DOMAIN, TITLE, CONF_HOST, CONF_TOKEN, DEFAULT_TOKEN
 
 _LOGGER = logging.getLogger(__name__)
 
-# Options Flow: 재구성 시 설정 변경
-class KRadioOptionsProvider(config_entries.OptionsFlow):
+class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle Korea Radio options."""
     def __init__(self, entry):
+        """Initialize options flow."""
         super().__init__()
         self._entry = entry
 
     async def async_step_init(self, user_input=None):
+        """Manage the options."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # 현재 설정값 가져오기 (options에 없으면 data에서)
         current_host = self._entry.options.get(
             CONF_HOST, self._entry.data.get(CONF_HOST, "http://localhost:3005")
         )
@@ -30,11 +31,12 @@ class KRadioOptionsProvider(config_entries.OptionsFlow):
         return self.async_show_form(step_id="init", data_schema=schema)
 
 
-# Config Flow: 최초 등록
-class KRadioSetupFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Korea Radio."""
     VERSION = 1
 
     async def async_step_user(self, user_input=None):
+        """Handle the initial step."""
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
@@ -49,4 +51,5 @@ class KRadioSetupFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     def async_get_options_flow(config_entry):
-        return KRadioOptionsProvider(config_entry)
+        """Get the options flow for this handler."""
+        return KoreaRadioOptionsFlowHandler(config_entry)
