@@ -1,5 +1,5 @@
-DOMAIN = 'korea_radio'
-TITLE  = 'Korea Radio'
+DOMAIN = 'korea_radio_hacs'
+TITLE  = 'Korea Radio Hacs'
 
 CONF_HOST = "host"
 CONF_TOKEN = "token"
