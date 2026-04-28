@@ -8,7 +8,8 @@ from homeassistant.components.media_source.models import (
     MediaSourceItem,
     PlayMedia,
 )
-from homeassistant.core import HomeAssistant, ConfigEntryState
+from homeassistant.core import HomeAssistant
+from homeassistant.config_entries import ConfigEntryState
 
 from .const import DOMAIN, CHANNEL_MAPPING, CONF_HOST, CONF_TOKEN
 from .api import RadioEndpointManager
@@ -41,16 +42,17 @@ class RadioChannelBrowser(MediaSource):
         api = RadioEndpointManager(self.hass, host, token)
         url = api.build_stream_link(item.identifier)
         
-        return PlayMedia(url, "music")
+        # 멜론이나 다른 라디오와 마찬가지로 'music' 타입으로 반환하되 호환성 고려
+        return PlayMedia(url, "audio/mpeg")
 
     async def async_browse_media(self, item: MediaSourceItem) -> BrowseMediaSource:
         """Browse media."""
-        if item.identifier is None:
+        if item.identifier in (None, "root"):
             return BrowseMediaSource(
                 domain=DOMAIN,
                 identifier="root",
-                media_class=MediaClass.DIRECTORY,
-                media_content_type=MediaType.CHANNELS,
+                media_class=MediaClass.CHANNEL,
+                media_content_type=MediaType.MUSIC,
                 title="Korea Radio",
                 can_play=False,
                 can_expand=True,
