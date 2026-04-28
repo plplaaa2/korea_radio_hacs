@@ -1,4 +1,4 @@
-# 📻 Korea Radio HACS Integration (v3.0.0)
+# 📻 Korea Radio HACS Integration (v1.0.0)
 
 Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 커스텀 통합 구성요소입니다. 이 구성요소는 **Korea Radio Add-on** 또는 호환되는 API 서버와 연동되어 작동합니다.
 
