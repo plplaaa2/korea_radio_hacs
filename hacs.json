@@ -1,0 +1,7 @@
+{
+  "name": "Korea Radio",
+  "content_in_root": true,
+  "homeassistant": "2024.1.0",
+  "country": "KR",
+  "render_readme": true
+}
