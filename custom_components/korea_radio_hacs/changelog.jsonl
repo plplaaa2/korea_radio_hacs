@@ -1,0 +1,3 @@
+{"version": "1.1.1-dev3", "date": "2026-04-28", "changes": ["Aligned with working reference project (YouTube Content Search)", "Simplified config_flow.py and removed experimental reconfigure step"]}
+{"version": "1.1.1-dev2", "date": "2026-04-28", "changes": ["Fixed 500 Internal Server Error by restoring OptionsFlow __init__", "Improved async_step_reconfigure compatibility"]}
+{"version": "1.1.1-dev1", "date": "2026-04-28", "changes": ["Added async_step_reconfigure to config_flow.py", "Improved OptionsFlow structure", "Added reconfigure strings and translations", "Updated tree.md structure"]}
