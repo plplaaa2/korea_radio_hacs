@@ -41,7 +41,7 @@ class RadioChannelBrowser(MediaSource):
         api = RadioEndpointManager(self.hass, host, token)
         url = api.build_stream_link(item.identifier)
         
-        return PlayMedia(url, "audio/mpeg")
+        return PlayMedia(url, "music")
 
     async def async_browse_media(self, item: MediaSourceItem) -> BrowseMediaSource:
         """Browse media."""
