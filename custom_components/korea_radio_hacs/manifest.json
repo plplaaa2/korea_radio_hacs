@@ -1,6 +1,6 @@
 {
-  "domain": "korea_radio",
-  "name": "Korea Radio",
+  "domain": "korea_radio_hacs",
+  "name": "Korea Radio Hacs",
   "documentation": "https://github.com/plplaaa2/korea_radio_hacs",
   "requirements": [],
   "dependencies": [
