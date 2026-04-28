@@ -3,6 +3,9 @@
   "name": "Korea Radio",
   "documentation": "https://github.com/plplaaa2/korea_radio_custom",
   "requirements": [],
+  "dependencies": [
+    "media_source"
+  ],
   "codeowners": [
     "@plplaaa2"
   ],
