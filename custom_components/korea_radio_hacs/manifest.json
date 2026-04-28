@@ -1,6 +1,6 @@
 {
   "domain": "korea_radio_hacs",
-  "name": "Korea Radio Hacs",
+  "name": "Korea Radio",
   "documentation": "https://github.com/plplaaa2/korea_radio_hacs",
   "requirements": [],
   "dependencies": [
@@ -10,6 +10,6 @@
     "@plplaaa2"
   ],
   "iot_class": "local_push",
-  "version": "1.0.0",
+  "version": "3.1.1",
   "config_flow": true
 }
