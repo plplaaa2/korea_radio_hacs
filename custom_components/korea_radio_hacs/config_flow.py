@@ -7,8 +7,9 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 
-# 도메인 직접 명시 (재구성 오류 방지)
+# 외부 참조를 끊고 직접 정의 (로딩 실패 방지)
 DOMAIN = "korea_radio_hacs"
+TITLE = "Korea Radio Hacs"
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,8 +24,7 @@ class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
         if user_input is not None:
-            # const에서 가져오지 않고 직접 제목 설정하여 임포트 꼬임 방지
-            return self.async_create_entry(title="Korea Radio Hacs", data=user_input)
+            return self.async_create_entry(title=TITLE, data=user_input)
 
         schema = vol.Schema({
             vol.Required("host", default="http://localhost:3005"): str,
@@ -34,7 +34,7 @@ class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> KoreaRadioOptionsFlowHandler:
+    def async_get_options_flow(config_entry):
         """Get the options flow for this handler."""
         return KoreaRadioOptionsFlowHandler(config_entry)
 
@@ -42,7 +42,7 @@ class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Korea Radio options."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+    def __init__(self, config_entry):
         """Initialize options flow."""
         self.config_entry = config_entry
 
@@ -51,7 +51,6 @@ class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        # 현재 설정값 가져오기
         current_host = self.config_entry.options.get(
             "host", self.config_entry.data.get("host", "http://localhost:3005")
         )
