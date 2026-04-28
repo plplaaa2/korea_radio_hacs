@@ -2,6 +2,11 @@
 
 Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 커스텀 통합 구성요소입니다. 이 구성요소는 **Korea Radio Add-on** 또는 호환되는 API 서버와 연동되어 작동합니다.
 
+> [!IMPORTANT]
+> **필수 애드온 설치:** 이 통합 구성요소를 사용하려면 먼저 아래 애드온이 설치되어 있어야 합니다.
+> 
+> [plplaaa2/korea_radio_addon: Korea Radio Home Assistant Addon](https://github.com/plplaaa2/korea_radio_addon)
+
 ## 🚀 주요 특징
 
 - **미디어 브라우저 지원**: HA의 '미디어' 메뉴에서 라디오 채널을 직접 탐색하고 재생할 수 있습니다. (New!)
