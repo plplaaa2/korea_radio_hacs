@@ -51,7 +51,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
             payload = {
                 "entity_id": entity_id,
                 "media_content_id": stream_url,
-                "media_content_type": "audio/mpeg",
+                "media_content_type": "music",
                 "extra": {"metadata": {"metadataType": 3, "title": title}}
             }
             
