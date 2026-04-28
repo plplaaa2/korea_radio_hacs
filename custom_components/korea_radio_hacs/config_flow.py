@@ -7,37 +7,9 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 
-# 외부 참조를 끊고 직접 정의 (로딩 실패 방지)
 DOMAIN = "korea_radio_hacs"
-TITLE = "Korea Radio Hacs"
 
 _LOGGER = logging.getLogger(__name__)
-
-class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Korea Radio."""
-
-    VERSION = 1
-
-    async def async_step_user(self, user_input=None):
-        """Handle the initial step."""
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
-        if user_input is not None:
-            return self.async_create_entry(title=TITLE, data=user_input)
-
-        schema = vol.Schema({
-            vol.Required("host", default="http://localhost:3005"): str,
-            vol.Required("token", default="homeassistant"): str,
-        })
-        return self.async_show_form(step_id="user", data_schema=schema)
-
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry):
-        """Get the options flow for this handler."""
-        return KoreaRadioOptionsFlowHandler(config_entry)
-
 
 class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
     """Handle Korea Radio options."""
@@ -63,3 +35,29 @@ class KoreaRadioOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Required("token", default=current_token): str,
         })
         return self.async_show_form(step_id="init", data_schema=schema)
+
+
+class KoreaRadioConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a config flow for Korea Radio."""
+
+    VERSION = 1
+
+    async def async_step_user(self, user_input=None):
+        """Handle the initial step."""
+        if self._async_current_entries():
+            return self.async_abort(reason="single_instance_allowed")
+
+        if user_input is not None:
+            return self.async_create_entry(title="Korea Radio Hacs", data=user_input)
+
+        schema = vol.Schema({
+            vol.Required("host", default="http://localhost:3005"): str,
+            vol.Required("token", default="homeassistant"): str,
+        })
+        return self.async_show_form(step_id="user", data_schema=schema)
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry):
+        """Get the options flow for this handler."""
+        return KoreaRadioOptionsFlowHandler(config_entry)
