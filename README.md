@@ -13,7 +13,7 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 ## 🚀 주요 특징
 
 - **미디어 브라우저 지원**: HA의 '미디어' 메뉴에서 라디오 채널을 직접 탐색하고 재생할 수 있습니다. (New!)
-- **동적 연동**: 서버 정보를 기반으로 실시간 스트리밍 주소를 생성합니다.
+- **동적 연동**: Home Assistant서버 정보를 기반으로 실시간 스트리밍 주소를 생성합니다. (Add-on 일때 한함)
 - **최신 표준**: 최신 Home Assistant 개발 가이드를 준수하며, 로직이 캡슐화되어 유지보수가 용이합니다.
 - **간편한 설정**: UI를 통해 서버 주소와 토큰을 입력하는 것만으로 설정을 마칠 수 있습니다.
 - **하위 호환성**: 기존에 사용하던 서비스(`play_radio`)와 채널 이름들을 그대로 사용할 수 있습니다.
@@ -65,10 +65,6 @@ data:
   entity_id: media_player.google_home_mini
   channel: KBSCoolFM
 ```
-
-## 💡 주요 개선 사항
-- **Google Cast 완벽 호환**: 서버 주소가 `localhost`나 `127.0.0.1`로 설정되어 있어도, Google Cast 기기에서 재생 시 자동으로 Home Assistant의 실제 내부 IP로 변환하여 전송합니다. (외부 기기 재생 실패 문제 해결)
-- **독자적인 API 관리**: 모든 스트리밍 URL 생성 로직이 `RadioEndpointManager`로 캡슐화되어 시스템 안정성이 크게 향상되었습니다.
 
 ## 📝 기여 및 라이센스
 이 프로젝트는 [miumida/korea_radio](https://github.com/miumida/korea_radio) 프로젝트의 아이디어에서 영감을 받아 현대적인 구조로 재작성되었습니다.
