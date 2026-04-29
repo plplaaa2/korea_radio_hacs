@@ -20,6 +20,12 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 
 ## 🛠 설치 방법
 
+### 자동설치 (권장)
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=plplaaa2&repository=https%3A%2F%2Fgithub.com%2Fplplaaa2%2Fkorea_radio_hacs&category=integrate)
+
+위 버튼을 누른 후 저장소 추가 후 HACS에서 Korea radio hacs를 검색하여 다운로드 합니다.
+
 ### 수동 설치
 1. HACS에서 저장소를 추가 합니다.
    ```https://github.com/plplaaa2/korea_radio_hacs```
