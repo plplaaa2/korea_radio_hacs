@@ -1,1 +1,0 @@
-{"version": "1.1.1-dev1", "date": "2026-04-28", "changes": ["Added async_step_reconfigure to config_flow.py", "Improved OptionsFlow structure", "Added reconfigure strings and translations", "Updated tree.md structure"]}
