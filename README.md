@@ -60,7 +60,7 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 
 **YAML 예제:**
 ```yaml
-service: korea_radio.play_radio
+action: korea_radio.play_radio
 data:
   entity_id: media_player.google_home_mini
   channel: KBSCoolFM
