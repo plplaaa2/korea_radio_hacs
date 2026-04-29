@@ -21,9 +21,10 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 ## 🛠 설치 방법
 
 ### 수동 설치
-1. 이 저장소의 `korea_radio` 폴더를 다운로드합니다.
-2. Home Assistant의 `config/custom_components/` 디렉토리 안에 `korea_radio` 폴더를 통째로 복사합니다.
-3. Home Assistant를 재시작합니다.
+1. HACS에서 저장소를 추가 합니다.
+   ```https://github.com/plplaaa2/korea_radio_hacs```
+3. HACS에서 Korea radio hacs를 검색하여 다운로드 합니다.
+4. Home Assistant를 재시작합니다.
 
 ## ⚙️ 설정 방법
 
