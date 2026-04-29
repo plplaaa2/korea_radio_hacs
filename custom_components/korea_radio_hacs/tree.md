@@ -1,7 +1,7 @@
 # Korea Radio Project Structure
 
 ```
-z:\korea_radio_hacs-main
+\korea_radio_hacs-main
 ├── custom_components/
 │   └── korea_radio_hacs/
 │       ├── translations/
