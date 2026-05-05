@@ -9,3 +9,5 @@
 {"version": "1.1.1-dev3", "date": "2026-04-28", "changes": ["Aligned with working reference project (YouTube Content Search)", "Simplified config_flow.py and removed experimental reconfigure step"]}
 {"version": "1.1.1-dev2", "date": "2026-04-28", "changes": ["Fixed 500 Internal Server Error by restoring OptionsFlow __init__", "Improved async_step_reconfigure compatibility"]}
 {"version": "1.1.1-dev1", "date": "2026-04-28", "changes": ["Added async_step_reconfigure to config_flow.py", "Improved OptionsFlow structure", "Added reconfigure strings and translations", "Updated tree.md structure"]}
+{"version": "1.1.2", "date": "2026-05-05", "changes": ["Integrated with TubePlayer Lite (v1.1.0)", "Added 'play_id' service for YouTube alias playback", "Separated endpoints for Radio (3005) and Tube (4005)", "Enhanced Media Browser with Category support (Radio/Tube)"]}
+
