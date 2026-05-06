@@ -16,8 +16,12 @@ class RadioEndpointManager:
     def __init__(self, hass: HomeAssistant, host: str, token: str, radio_port: int, tube_port: int) -> None:
         """Initialize the API client."""
         self.hass = hass
+        # host에 프로토콜이 없으면 추가
+        if not host.startswith(("http://", "https://")):
+            host = f"http://{host}"
+            
         # host에서 포트가 포함되어 있다면 제거 (IP/도메인만 유지)
-        if ":" in host.replace("http://", ""):
+        if ":" in host.replace("http://", "").replace("https://", ""):
             self.host = host.rsplit(":", 1)[0]
         else:
             self.host = host.rstrip("/")
