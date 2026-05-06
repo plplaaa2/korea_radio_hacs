@@ -5,8 +5,10 @@
         "title": "Korea Radio 설정",
         "description": "라디오 프로젝트 API 서버의 정보를 입력하세요.",
         "data": {
-          "host": "API 서버 주소",
-          "token": "인증 토큰"
+          "host": "API 서버 주소 (예: http://192.168.1.100)",
+          "token": "인증 토큰",
+          "radio_port": "라디오 서버 포트 (기본값: 3005)",
+          "tube_port": "TubePlayer 서버 포트 (기본값: 4005)"
         }
       }
     },
@@ -25,7 +27,9 @@
         "title": "Korea Radio 설정 변경",
         "data": {
           "host": "API 서버 주소",
-          "token": "인증 토큰"
+          "token": "인증 토큰",
+          "radio_port": "라디오 서버 포트",
+          "tube_port": "TubePlayer 서버 포트"
         }
       }
     },
