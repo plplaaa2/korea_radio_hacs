@@ -12,7 +12,6 @@ from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntryState
 
 from .const import DOMAIN, CHANNEL_MAPPING, CONF_HOST, CONF_TOKEN, CONF_RADIO_PORT, CONF_TUBE_PORT, DEFAULT_RADIO_PORT, DEFAULT_TUBE_PORT
-from .api import RadioEndpointManager
 
 async def async_get_media_source(hass: HomeAssistant) -> MediaSource:
     """Set up Korea Radio media source."""
@@ -144,3 +143,35 @@ class RadioChannelBrowser(MediaSource):
             )
             
         return None
+
+
+class RadioEndpointManager:
+    """Korea Radio API endpoint manager."""
+    
+    def __init__(self, hass: HomeAssistant, host: str, token: str, radio_port: int, tube_port: int) -> None:
+        """Initialize the API manager."""
+        self.hass = hass
+        self.host = host
+        self.token = token
+        self.radio_port = radio_port
+        self.tube_port = tube_port
+    
+    def build_stream_link(self, channel: str) -> str:
+        """Build a stream link for a radio channel."""
+        # TODO: Implement stream link building
+        pass
+    
+    def build_id_link(self, video_id: str) -> str:
+        """Build a link for a YouTube video."""
+        # TODO: Implement ID link building
+        pass
+    
+    def find_channel_title(self, channel: str) -> str:
+        """Find the title of a radio channel."""
+        # TODO: Implement channel title lookup
+        pass
+    
+    async def async_get_tube_list(self) -> list:
+        """Get list of tube items."""
+        # TODO: Implement tube list retrieval
+        pass
