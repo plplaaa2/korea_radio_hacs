@@ -1,4 +1,6 @@
-"""Korea Radio Media Source."""
+"""Korea Radio Media Source.
+- 연결된 파일: api.py, const.py
+"""
 from __future__ import annotations
 
 from homeassistant.components.media_player import MediaClass, MediaType
@@ -11,7 +13,7 @@ from homeassistant.components.media_source.models import (
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntryState
 
-from .const import DOMAIN, CHANNEL_MAPPING, CONF_HOST, CONF_TOKEN
+from .const import DOMAIN, CHANNEL_MAPPING, CONF_HOST, CONF_TOKEN, CONF_RADIO_PORT, CONF_TUBE_PORT, DEFAULT_RADIO_PORT, DEFAULT_TUBE_PORT
 from .api import RadioEndpointManager
 
 async def async_get_media_source(hass: HomeAssistant) -> MediaSource:
@@ -32,17 +34,23 @@ class RadioChannelBrowser(MediaSource):
         """Resolve a media item to a playable URL."""
         entries = self.hass.config_entries.async_entries(DOMAIN)
         entry = next((e for e in entries if e.state == ConfigEntryState.LOADED), None)
-        
-        if not entry:
-            return None
+        if not entry: return None
 
         host = entry.options.get(CONF_HOST, entry.data.get(CONF_HOST, ""))
         token = entry.options.get(CONF_TOKEN, entry.data.get(CONF_TOKEN, ""))
+        radio_port = entry.options.get(CONF_RADIO_PORT, entry.data.get(CONF_RADIO_PORT, DEFAULT_RADIO_PORT))
+        tube_port = entry.options.get(CONF_TUBE_PORT, entry.data.get(CONF_TUBE_PORT, DEFAULT_TUBE_PORT))
         
-        api = RadioEndpointManager(self.hass, host, token)
-        url = api.build_stream_link(item.identifier)
+        api = RadioEndpointManager(self.hass, host, token, radio_port, tube_port)
         
-        # 멜론이나 다른 라디오와 마찬가지로 'music' 타입으로 반환하되 호환성 고려
+        identifier = item.identifier
+        if identifier.startswith("tube:"):
+            url = api.build_id_link(identifier.replace("tube:", ""))
+        else:
+            # 기본은 라디오로 처리 (radio: 접두사 대응 및 레거시 대응)
+            clean_id = identifier.replace("radio:", "")
+            url = api.build_stream_link(clean_id)
+        
         return PlayMedia(url, "audio/mpeg")
 
     async def async_browse_media(self, item: MediaSourceItem) -> BrowseMediaSource:
@@ -51,15 +59,46 @@ class RadioChannelBrowser(MediaSource):
             return BrowseMediaSource(
                 domain=DOMAIN,
                 identifier="root",
-                media_class=MediaClass.CHANNEL,
+                media_class=MediaClass.DIRECTORY,
                 media_content_type=MediaType.MUSIC,
-                title="Korea Radio",
+                title="Korea Radio & Tube",
                 can_play=False,
                 can_expand=True,
                 children=[
                     BrowseMediaSource(
                         domain=DOMAIN,
-                        identifier=channel_id,
+                        identifier="radio_list",
+                        media_class=MediaClass.DIRECTORY,
+                        media_content_type=MediaType.MUSIC,
+                        title="Radio Channels",
+                        can_play=False,
+                        can_expand=True,
+                    ),
+                    BrowseMediaSource(
+                        domain=DOMAIN,
+                        identifier="tube_list",
+                        media_class=MediaClass.DIRECTORY,
+                        media_content_type=MediaType.MUSIC,
+                        title="TubePlayer Music",
+                        can_play=False,
+                        can_expand=True,
+                    ),
+                ],
+            )
+        
+        if item.identifier == "radio_list":
+            return BrowseMediaSource(
+                domain=DOMAIN,
+                identifier="radio_list",
+                media_class=MediaClass.DIRECTORY,
+                media_content_type=MediaType.MUSIC,
+                title="Radio Channels",
+                can_play=False,
+                can_expand=True,
+                children=[
+                    BrowseMediaSource(
+                        domain=DOMAIN,
+                        identifier=f"radio:{channel_id}",
                         media_class=MediaClass.MUSIC,
                         media_content_type=MediaType.MUSIC,
                         title=name,
@@ -69,4 +108,41 @@ class RadioChannelBrowser(MediaSource):
                     for name, channel_id in CHANNEL_MAPPING.items()
                 ],
             )
+
+        if item.identifier == "tube_list":
+            # TubePlayer 목록 실시간 조회
+            entries = self.hass.config_entries.async_entries(DOMAIN)
+            entry = next((e for e in entries if e.state == ConfigEntryState.LOADED), None)
+            if not entry: return None
+
+            host = entry.options.get(CONF_HOST, entry.data.get(CONF_HOST, ""))
+            token = entry.options.get(CONF_TOKEN, entry.data.get(CONF_TOKEN, ""))
+            radio_port = entry.options.get(CONF_RADIO_PORT, entry.data.get(CONF_RADIO_PORT, DEFAULT_RADIO_PORT))
+            tube_port = entry.options.get(CONF_TUBE_PORT, entry.data.get(CONF_TUBE_PORT, DEFAULT_TUBE_PORT))
+            api = RadioEndpointManager(self.hass, host, token, radio_port, tube_port)
+            
+            tube_items = await api.async_get_tube_list()
+            
+            return BrowseMediaSource(
+                domain=DOMAIN,
+                identifier="tube_list",
+                media_class=MediaClass.DIRECTORY,
+                media_content_type=MediaType.MUSIC,
+                title="TubePlayer Music",
+                can_play=False,
+                can_expand=True,
+                children=[
+                    BrowseMediaSource(
+                        domain=DOMAIN,
+                        identifier=f"tube:{t['id']}",
+                        media_class=MediaClass.MUSIC,
+                        media_content_type=MediaType.MUSIC,
+                        title=t['name'],
+                        can_play=True,
+                        can_expand=False,
+                    )
+                    for t in tube_items
+                ],
+            )
+            
         return None
