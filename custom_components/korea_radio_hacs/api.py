@@ -63,15 +63,18 @@ class RadioEndpointManager:
         return channel_key
 
     async def async_get_tube_list(self) -> list[dict[str, str]]:
-        """Fetch the list of YouTube aliases from TubePlayer Lite server."""
-        import aiohttp
+        """Fetch the list of YouTube aliases from TubePlayer Lite server.
+        - 의존 관계: __init__.py, media_source.py에서 이 메서드를 호출하여 목록을 조회함
+        - 기능 요약: HA 공유 세션을 통해 외부 API로부터 TubePlayer 목록을 비동기 조회
+        """
+        from homeassistant.helpers.aiohttp_client import async_get_clientsession
         host_with_port = self._resolve_host(self.tube_port)
         url = f"{host_with_port}/api/list?token={self.token}"
         try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url, timeout=5) as response:
-                    if response.status == 200:
-                        return await response.json()
+            session = async_get_clientsession(self.hass)
+            async with session.get(url, timeout=5) as response:
+                if response.status == 200:
+                    return await response.json()
         except Exception as ex:
             _LOGGER.error("Failed to fetch tube list: %s", ex)
         return []

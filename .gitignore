@@ -1,0 +1,7 @@
+# Local change history
+changelog.jsonl
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class

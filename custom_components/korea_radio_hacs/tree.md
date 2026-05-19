@@ -15,6 +15,8 @@
 │       ├── services.yaml        # 서비스 정의
 │       ├── strings.json         # 기본 현지화 문자열
 │       └── tree.md              # 프로젝트 구조
+├── .gitignore                   # Git 업로드 무시 설정
+├── CHANGELOG.md                 # HACS 릴리즈 변경 내역서
 ├── hacs.json                    # HACS 설정 파일
 ├── LICENSE                      # MIT 라이센스
 └── README.md                    # 사용자 가이드

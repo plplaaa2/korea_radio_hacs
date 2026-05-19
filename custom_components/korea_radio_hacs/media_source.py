@@ -31,17 +31,13 @@ class RadioChannelBrowser(MediaSource):
         self.hass = hass
 
     async def async_resolve_media(self, item: MediaSourceItem) -> PlayMedia:
-        """Resolve a media item to a playable URL."""
-        entries = self.hass.config_entries.async_entries(DOMAIN)
-        entry = next((e for e in entries if e.state == ConfigEntryState.LOADED), None)
-        if not entry: return None
-
-        host = entry.options.get(CONF_HOST, entry.data.get(CONF_HOST, ""))
-        token = entry.options.get(CONF_TOKEN, entry.data.get(CONF_TOKEN, ""))
-        radio_port = entry.options.get(CONF_RADIO_PORT, entry.data.get(CONF_RADIO_PORT, DEFAULT_RADIO_PORT))
-        tube_port = entry.options.get(CONF_TUBE_PORT, entry.data.get(CONF_TUBE_PORT, DEFAULT_TUBE_PORT))
-        
-        api = RadioEndpointManager(self.hass, host, token, radio_port, tube_port)
+        """Resolve a media item to a playable URL.
+        - 연결된 파일: api.py (RadioEndpointManager API 제어 객체 호출)
+        - 기능 요약: 미디어 브라우저에서 선택한 미디어를 재생 가능한 스트리밍 주소로 해석
+        """
+        if DOMAIN not in self.hass.data or not self.hass.data[DOMAIN]:
+            return None
+        api = next(iter(self.hass.data[DOMAIN].values()))
         
         identifier = item.identifier
         if identifier.startswith("tube:"):
@@ -111,15 +107,11 @@ class RadioChannelBrowser(MediaSource):
 
         if item.identifier == "tube_list":
             # TubePlayer 목록 실시간 조회
-            entries = self.hass.config_entries.async_entries(DOMAIN)
-            entry = next((e for e in entries if e.state == ConfigEntryState.LOADED), None)
-            if not entry: return None
-
-            host = entry.options.get(CONF_HOST, entry.data.get(CONF_HOST, ""))
-            token = entry.options.get(CONF_TOKEN, entry.data.get(CONF_TOKEN, ""))
-            radio_port = entry.options.get(CONF_RADIO_PORT, entry.data.get(CONF_RADIO_PORT, DEFAULT_RADIO_PORT))
-            tube_port = entry.options.get(CONF_TUBE_PORT, entry.data.get(CONF_TUBE_PORT, DEFAULT_TUBE_PORT))
-            api = RadioEndpointManager(self.hass, host, token, radio_port, tube_port)
+            # - 연결된 파일: api.py (async_get_tube_list API 호출)
+            # - 기능 요약: 캐싱된 API 객체를 사용해 외부 서버로부터 튜브 목록을 비동기 조회하여 브라우저 리스트 생성
+            if DOMAIN not in self.hass.data or not self.hass.data[DOMAIN]:
+                return None
+            api = next(iter(self.hass.data[DOMAIN].values()))
             
             tube_items = await api.async_get_tube_list()
             
