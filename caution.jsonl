@@ -1,0 +1,2 @@
+{"topic":"Config flow validation contract","note":"The setup flow validates credentials through the add-on GET /get_radio_list endpoint; keep this aligned with the companion korea_radio_addon API response and status codes."}
+{"topic":"Assist LLM tool integration","note":"Contribute via custom_components/korea_radio_hacs/llm.py and only expose tools on the built-in Assist API. Keep tool names domain-prefixed, return llm.ToolResult, and check Assist entity exposure before controlling media players."}

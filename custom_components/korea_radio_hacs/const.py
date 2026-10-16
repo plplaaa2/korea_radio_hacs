@@ -4,11 +4,10 @@ TITLE  = 'Korea Radio Hacs'
 CONF_HOST = "host"
 CONF_TOKEN = "token"
 CONF_RADIO_PORT = "radio_port"
-CONF_TUBE_PORT = "tube_port"
+CONF_PLAYBACK_HOST = "playback_host"
 
 DEFAULT_TOKEN = "homeassistant"
 DEFAULT_RADIO_PORT = 3005
-DEFAULT_TUBE_PORT = 4005
 
 # Backward compatibility mapping for channel keys
 CHANNEL_MAPPING = {

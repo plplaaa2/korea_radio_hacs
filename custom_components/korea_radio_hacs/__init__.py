@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.exceptions import ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 
-from .const import DOMAIN, CONF_RADIO_PORT, CONF_TUBE_PORT, DEFAULT_RADIO_PORT, DEFAULT_TUBE_PORT
+from .const import DOMAIN, CONF_RADIO_PORT, CONF_PLAYBACK_HOST, DEFAULT_RADIO_PORT
 from .api import RadioEndpointManager
 
 _LOGGER = logging.getLogger(__name__)
@@ -24,8 +24,8 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     """
     
     async def async_perform_radio_play(call: ServiceCall) -> None:
-        """Handle the play_radio and play_id service calls.
-        - 연결된 파일: api.py (스트리밍 주소 빌드 메서드 사용)
+        """Handle the play_radio service call.
+        - Connected files: api.py (builds the radio stream URL)
         - 기능 요약: 미디어 플레이어에 스트리밍 주소 및 메타데이터를 전송하여 재생 명령
         """
         if DOMAIN not in hass.data or not hass.data[DOMAIN]:
@@ -40,17 +40,11 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
         if not isinstance(entity_ids, list):
             entity_ids = [entity_ids]
 
-        # 서비스 종류에 따른 URL 및 제목 결정 (엔드포인트 분리)
-        if call.service == "play_id":
-            alias = call.data.get("id")
-            stream_url = api.build_id_link(alias)
-            title = f"YouTube: {alias}"
-        else:
-            channel_raw = call.data.get("channel")
-            stream_url = api.build_stream_link(channel_raw)
-            title = f"Radio: {api.find_channel_title(channel_raw)}"
+        channel_raw = call.data.get("channel")
+        title = f"Radio: {api.find_channel_title(channel_raw)}"
         
         for entity_id in entity_ids:
+            stream_url = api.build_stream_link(channel_raw, target_media_player=entity_id)
             payload = {
                 "entity_id": entity_id,
                 "media_content_id": stream_url,
@@ -66,10 +60,6 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
         DOMAIN, "play_radio", async_perform_radio_play,
         schema=cv.make_entity_service_schema({vol.Required("channel"): cv.string})
     )
-    hass.services.async_register(
-        DOMAIN, "play_id", async_perform_radio_play,
-        schema=cv.make_entity_service_schema({vol.Required("id"): cv.string})
-    )
     return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -80,14 +70,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     host = entry.options.get(CONF_HOST, entry.data.get(CONF_HOST, ""))
     token = entry.options.get(CONF_TOKEN, entry.data.get(CONF_TOKEN, ""))
     radio_port = entry.options.get(CONF_RADIO_PORT, entry.data.get(CONF_RADIO_PORT, DEFAULT_RADIO_PORT))
-    tube_port = entry.options.get(CONF_TUBE_PORT, entry.data.get(CONF_TUBE_PORT, DEFAULT_TUBE_PORT))
-    
-    api = RadioEndpointManager(hass, host, token, radio_port, tube_port)
+    playback_host = entry.options.get(
+        CONF_PLAYBACK_HOST, entry.data.get(CONF_PLAYBACK_HOST, "")
+    )
+    api = RadioEndpointManager(hass, host, token, radio_port, playback_host)
     
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = api
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
+    return True
+
+
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Remove the TubePlayer-only port from existing config entries."""
+    if entry.version < 3:
+        data = {key: value for key, value in entry.data.items() if key != "tube_port"}
+        options = {key: value for key, value in entry.options.items() if key != "tube_port"}
+        hass.config_entries.async_update_entry(
+            entry,
+            data=data,
+            options=options,
+            version=3,
+        )
     return True
 
 async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
