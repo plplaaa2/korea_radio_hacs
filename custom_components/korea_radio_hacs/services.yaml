@@ -1,4 +1,4 @@
-# Describes the format for available Play Radio services
+# Service description for korea_radio_hacs.play_radio.
 play_radio:
   description: Play a radio channel on selected media players.
   fields:
@@ -54,18 +54,3 @@ play_radio:
             - label: "EBS FM (104.5)"
               value: "ebs"
           custom_value: true
-play_id:
-  description: Play a song from YouTube using a TubePlayer Unique ID (alias).
-  fields:
-    entity_id:
-      description: Name(s) of media player entities.
-      example: "media_player.living_room_speaker"
-      selector:
-        entity:
-          domain: media_player
-          multiple: true
-    id:
-      description: Enter the Unique ID (alias) registered in TubePlayer.
-      example: "my_song_alias"
-      selector:
-        text:

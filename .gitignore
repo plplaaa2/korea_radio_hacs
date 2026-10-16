@@ -1,5 +1,6 @@
 # Local change history
 changelog.jsonl
+caution.jsonl
 
 # Python cache
 __pycache__/

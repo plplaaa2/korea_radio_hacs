@@ -2,6 +2,7 @@
   "domain": "korea_radio_hacs",
   "name": "Korea Radio",
   "documentation": "https://github.com/plplaaa2/korea_radio_hacs",
+  "issue_tracker": "https://github.com/plplaaa2/korea_radio_hacs/issues",
   "requirements": [],
   "dependencies": [
     "media_source"
@@ -10,6 +11,6 @@
     "@plplaaa2"
   ],
   "iot_class": "local_push",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "config_flow": true
 }
