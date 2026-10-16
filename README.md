@@ -48,9 +48,9 @@ Home Assistant에서 대한민국 라디오를 편리하게 제어하기 위한 
 4. 필수 애드온도 더 이상 사용하지 않는 경우 애드온 저장소에서 별도로 제거합니다.
 
 ### Assist 음성 제어
-Korea Radio는 Home Assistant의 Assist 도구 목록에 **Korea Radio** 도구를 제공합니다. Assist에 사용할 미디어 플레이어를 노출하고, 도구 호출을 지원하는 LLM 대화 에이전트를 선택하세요. 예를 들어 “거실 스피커에서 KBS Cool FM 틀어줘”라고 요청할 수 있습니다.
+Korea Radio는 Home Assistant의 LLM API 목록에 **Korea Radio** 제공자로 등록됩니다. 사용 중인 대화 에이전트의 API 설정에서 Korea Radio를 선택하고, 재생할 미디어 플레이어를 Assist에 노출하세요. 예를 들어 “거실 스피커에서 KBS Cool FM 틀어줘”라고 요청할 수 있습니다.
 
-Assist의 표시 이름은 **Korea Radio**이며 내부 도구 식별자는 `korea_radio_hacs__play_radio`입니다. 채널 키와 Assist에 노출된 미디어 플레이어 엔티티를 전달받아 재생합니다. 지원 채널은 `services.yaml`의 `play_radio` 목록을 따릅니다. LLM 도구 플랫폼은 Home Assistant 2026.10 이상이 필요합니다.
+도구 이름은 `korea_radio`입니다. 채널 키와 Assist에 노출된 미디어 플레이어 엔티티를 전달받아 재생합니다. 지원 채널은 `services.yaml`의 `play_radio` 목록을 따릅니다. LLM API는 Home Assistant 2026.10 이상이 필요합니다.
 
 ### 미디어 브라우저
 가장 쉽고 직관적인 방법입니다. 별도의 설정 없이 HA UI에서 바로 채널을 선택할 수 있습니다.

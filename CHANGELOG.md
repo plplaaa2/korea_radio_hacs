@@ -2,7 +2,7 @@
 
 ## [1.1.2] - 2026-10-16
 - Removed TubePlayer Lite configuration, media browser entries, API support, and `play_id` service.
-- Added the `Korea Radio` tool to the Home Assistant Assist LLM API for playing radio stations.
+- Added a selectable `Korea Radio` LLM API provider with the `korea_radio` tool.
 - Added migration to remove the obsolete TubePlayer port from existing config entries.
 - Raised the minimum supported Home Assistant version to 2026.10.0.
 - Added connection validation, duplicate server prevention, and HACS brand metadata.

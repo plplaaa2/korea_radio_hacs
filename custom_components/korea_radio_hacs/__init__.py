@@ -77,6 +77,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = api
+    from .llm import register_api
+
+    entry.async_on_unload(register_api(hass, entry.entry_id))
 
     entry.async_on_unload(entry.add_update_listener(update_listener))
     return True

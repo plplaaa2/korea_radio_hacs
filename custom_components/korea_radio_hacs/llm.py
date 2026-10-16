@@ -1,18 +1,14 @@
-"""Home Assistant Assist tools for Korea Radio.
-
-Summary: Contribute a radio playback tool to the built-in Assist API.
-Related files: api.py, const.py, __init__.py.
-"""
+"""Selectable Korea Radio LLM API; related files: api.py, const.py, __init__.py."""
 from __future__ import annotations
 
 import probatio
 
-from homeassistant.components import llm as llm_platform
 from homeassistant.components.homeassistant import async_should_expose
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.llm import (
-    LLM_API_ASSIST,
+    API,
+    APIInstance,
     LLMContext,
     Tool,
     ToolAnnotations,
@@ -20,14 +16,13 @@ from homeassistant.helpers.llm import (
     ToolResult,
 )
 
-from .api import RadioEndpointManager
 from .const import CHANNEL_MAPPING, DOMAIN
 
 
 class PlayRadioTool(Tool):
     """Play a Korean radio station on an exposed media player."""
 
-    name = f"{DOMAIN}__play_radio"
+    name = "korea_radio"
     title = "Korea Radio"
     description = (
         "Play a Korean radio station on an Assist-exposed Home Assistant media player. "
@@ -49,6 +44,9 @@ class PlayRadioTool(Tool):
         }
     )
 
+    def __init__(self, entry_id: str) -> None:
+        self._entry_id = entry_id
+
     async def async_call(
         self,
         hass: HomeAssistant,
@@ -64,10 +62,8 @@ class PlayRadioTool(Tool):
             raise HomeAssistantError(f"Unsupported Korea Radio channel: {channel}")
         if not async_should_expose(hass, llm_context.assistant, entity_id):
             raise HomeAssistantError("The target media player is not exposed to Assist")
-        if not (entries := hass.data.get(DOMAIN)):
+        if not (api := hass.data.get(DOMAIN, {}).get(self._entry_id)):
             raise HomeAssistantError("Korea Radio is not configured")
-
-        api: RadioEndpointManager = next(iter(entries.values()))
         await hass.services.async_call(
             "media_player",
             "play_media",
@@ -90,26 +86,39 @@ class PlayRadioTool(Tool):
         return ToolResult(data={"message": f"Started {channel} on {entity_id}"})
 
 
+class KoreaRadioAPI(API):
+    """Expose radio playback as a separately selectable conversation provider."""
+
+    def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
+        super().__init__(hass=hass, id=f"{DOMAIN}_{entry_id}", name="Korea Radio")
+        self._entry_id = entry_id
+
+    async def async_get_api_instance(self, llm_context: LLMContext) -> APIInstance:
+        if self._entry_id not in self.hass.data.get(DOMAIN, {}):
+            raise HomeAssistantError("Korea Radio is not configured")
+        return APIInstance(
+            api=self,
+            api_prompt=(
+                "Use korea_radio when asked to play a Korean radio station. "
+                "Supported keys: kbs_cool, kbs_happy, kbs_classic, kbs_1radio, "
+                "kbs_3radio, mbc_fm4u, mbc_fm, sbs_power, sbs_love, cbs_music, "
+                "cbs_fm, ytn, tbs, tbn, ifm, kfn, obs, wbs, ebs. "
+                "Only target media players exposed to Assist."
+            ),
+            llm_context=llm_context,
+            tools=[PlayRadioTool(self._entry_id)],
+        )
+
+
 @callback
-def async_get_tools(
-    hass: HomeAssistant,
-    llm_context: LLMContext,
-    api_id: str,
-) -> llm_platform.LLMTools | None:
-    """Offer the Korea Radio tool through Home Assistant Assist."""
-    if (
-        api_id != LLM_API_ASSIST
-        or not llm_context.assistant
-        or not hass.data.get(DOMAIN)
-    ):
-        return None
-    return llm_platform.LLMTools(
-        tools=[PlayRadioTool()],
-        prompt=(
-            "Use korea_radio_hacs__play_radio when asked to play a Korean radio "
-            "station. Supported keys: kbs_cool, kbs_happy, kbs_classic, "
-            "kbs_1radio, kbs_3radio, mbc_fm4u, mbc_fm, sbs_power, sbs_love, "
-            "cbs_music, cbs_fm, ytn, tbs, tbn, ifm, kfn, obs, wbs, ebs. "
-            "Only target media players exposed to Assist."
-        ),
-    )
+def async_get_tools(hass: HomeAssistant, llm_context: LLMContext, api_id: str) -> None:
+    """Avoid injecting duplicate tools into the built-in Assist API."""
+    return None
+
+
+@callback
+def register_api(hass: HomeAssistant, entry_id: str):
+    """Register one selectable provider for this config entry."""
+    from homeassistant.helpers.llm import async_register_api
+
+    return async_register_api(hass, KoreaRadioAPI(hass, entry_id))
